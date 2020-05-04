@@ -25,6 +25,7 @@ const Layout = ({ children }) => {
 
   return (
     <>
+      <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap" rel="stylesheet" />
       <Header siteTitle={data.site.siteMetadata.title} />
       <div
         style={{
