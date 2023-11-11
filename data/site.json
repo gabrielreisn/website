@@ -1,0 +1,53 @@
+{
+  "name": "🌿Digital Garden",
+  "description": "Personal website heavily inspired on joel hooks digital-garden and my friends @victor-paladini project",
+  "url": "https://gabrielreis.dev",
+  "author": {
+    "name": "Gabriel Reis",
+    "email": "gabrielreisnf@gmail.com",
+    "twitterHandle": "author_handle",
+    "picture": "/me.jpeg",
+    "about": "Hey there stranger 👋 \n\n I'm a 25y Software Engineer based in Brazil who enjoys cooking, music, a bit of art 🎨 and photography (trying to get back to old habits)"
+  },
+  "defaultSocialImage": "https://images.unsplash.com/photo-1589698272390-0501a07619bb",
+  "headerLinks": [
+    {
+      "text": "Blog",
+      "url": "/blog",
+      "external": false
+    },
+    {
+      "text": "About Me",
+      "url": "/about",
+      "external": false
+    }
+  ],
+  "socialLinks": [
+    {
+      "text": "GitHub",
+      "url": "https://github.com/gabrielreisn",
+      "iconPath": "/icons/github.svg",
+      "external": true
+    },
+    {
+      "text": "Twitter",
+      "url": "https://twitter.com/gabrielreisnf",
+      "iconPath": "/icons/twitter.svg",
+      "external": true
+    },
+    {
+      "text": "Linkedin",
+      "url": "https://www.linkedin.com/in/gabrielreisnf",
+      "iconPath": "/icons/linkedin.svg",
+      "external": true
+    },
+    {
+      "text": "Telegram",
+      "url": "https://t.me/gabrielreisn",
+      "iconPath": "/icons/telegram.svg",
+      "external": true
+    }
+  ],
+  "footerLinks": [],
+  "showFooterAttribution": true
+}
