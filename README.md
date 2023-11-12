@@ -76,5 +76,4 @@ Isn't Jamstack beautiful?
 1. google analytics
 2. json-ld schemas
 3. Turn the project into a template
-4. Use next/font for IBM plex mono
-5. convert static pages to MDX
+4. convert static pages to MDX

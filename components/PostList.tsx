@@ -8,7 +8,7 @@ export function PostList({ posts }: { posts: Array<Post> }) {
   return (
     <ul className="post-list">
       {posts?.map((post) => (
-        <li className="post-list__item" key={post.date}>
+        <li className="post-list__item" key={post.title}>
           <div>
             <div className="post-list__meta">
               <ReadableDateTime date={post.date} markdown={post.markdown.parent} />

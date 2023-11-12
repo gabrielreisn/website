@@ -21,7 +21,7 @@ body {
   font-variant-ligatures: contextual;
   -webkit-overflow-scrolling: touch;
   -webkit-text-size-adjust: 100%;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: var(--font-ibm-plex-sans);
 }
 
 h1,
