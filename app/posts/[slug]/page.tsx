@@ -11,7 +11,9 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params }: PageProps) {
-  return generateDefaultMetadata({ path: `posts/${[params.slug]}`, title: 'Blog' });
+  const { title, description } = await getSinglePost(params.slug);
+
+  return generateDefaultMetadata({ path: `posts/${[params.slug]}`, title, description });
 }
 
 export async function generateStaticParams() {

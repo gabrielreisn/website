@@ -3,15 +3,16 @@ import site from '@/data/site.json'
 
 type Params = {
   path?: string
+  description?: string
   title: string
 }
 
 export function generateDefaultMetadata(params: Params) {
-  const { path, title } = params
+  const { path, title, description } = params
 
 
   const metaTitle = `${title} | ${site.name}`
-  const metaDescription = 'Gabriel is a Software Engineer, these are notes and reflections about Software Engineering, hobbies and water cooler conversations'
+  const metaDescription = description ?? 'Gabriel is a Software Engineer, these are notes and reflections about Software Engineering, hobbies and water cooler conversations'
   const metaCanonical = path ? `${site.url}/${path}` : site.url
 
   return {
