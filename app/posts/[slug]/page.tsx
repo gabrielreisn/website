@@ -4,6 +4,8 @@ import { getAllPublished, getSinglePost } from '@/clients/notion';
 import ReactMarkdown from 'react-markdown';
 import { generateDefaultMetadata } from '@/modules/metadata';
 
+export const revalidate = 60;
+
 type PageProps = {
   params: { slug: string };
 };

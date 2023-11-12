@@ -5,6 +5,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { generateDefaultMetadata } from '@/modules/metadata';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   ...generateDefaultMetadata({ title: 'Home' }),
 };

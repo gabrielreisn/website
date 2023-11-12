@@ -3,6 +3,8 @@ import { PostList } from '@/components/PostList';
 import { generateDefaultMetadata } from '@/modules/metadata';
 import { getAllUniqueTags } from '@/modules/post';
 
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: PageProps) {
   const capitalizedTitle = params.tag
     .split('-')

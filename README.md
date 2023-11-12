@@ -35,8 +35,9 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+Check out: [https://gabrielreis.dev](https://gabrielreis.dev)
+
 ## Todo
 
-3. google analytics
-4. google search console
-5. json-ld schemas
+1. google analytics
+2. json-ld schemas
