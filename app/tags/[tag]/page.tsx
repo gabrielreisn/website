@@ -1,7 +1,15 @@
 import { getAllPublished } from '@/clients/notion';
 import { PostList } from '@/components/PostList';
+import { generateDefaultMetadata } from '@/modules/metadata';
 import { getAllUniqueTags } from '@/modules/post';
-import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: PageProps) {
+  const capitalizedTitle = params.tag
+    .split('-')
+    .map((tag) => tag.charAt(0).toUpperCase() + tag.slice(1))
+    .join(' ');
+  return generateDefaultMetadata({ path: `tags/${[params.tag]}`, title: capitalizedTitle });
+}
 
 export async function generateStaticParams() {
   const data = await getAllPublished();

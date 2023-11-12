@@ -2,11 +2,15 @@ import { ReadableDateTime } from '@/components/ReadableDateTime';
 import { TagList } from '@/components/TagList';
 import { getAllPublished, getSinglePost } from '@/clients/notion';
 import ReactMarkdown from 'react-markdown';
-import { notFound } from 'next/navigation';
+import { generateDefaultMetadata } from '@/modules/metadata';
 
 type PageProps = {
   params: { slug: string };
 };
+
+export async function generateMetadata({ params }: PageProps) {
+  return generateDefaultMetadata({ path: `posts/${[params.slug]}`, title: 'Blog' });
+}
 
 export async function generateStaticParams() {
   const posts = await getAllPublished();

@@ -1,4 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import site from '@/data/site.json';
+import { generateDefaultMetadata } from '@/modules/metadata';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  ...generateDefaultMetadata({ path: 'about', title: 'About me' }),
+};
 
 export default function About() {
   return (

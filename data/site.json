@@ -1,13 +1,12 @@
 {
   "name": "🌿Digital Garden",
-  "description": "Personal website heavily inspired on joel hooks digital-garden and my friends @victor-paladini project",
   "url": "https://gabrielreis.dev",
   "author": {
     "name": "Gabriel Reis",
     "email": "gabrielreisnf@gmail.com",
     "twitterHandle": "author_handle",
     "picture": "/me.jpeg",
-    "about": "Hey there stranger 👋 \n\n I'm a 25y Software Engineer based in Brazil who enjoys cooking, music, a bit of art 🎨 and photography (trying to get back to old habits)"
+    "about": "Hey there stranger 👋 \n\n I'm a 28y Software Engineer based in Brazil who enjoys cooking, music, a bit of art 🎨 and photography (trying to get back to old habits)"
   },
   "defaultSocialImage": "https://images.unsplash.com/photo-1589698272390-0501a07619bb",
   "headerLinks": [

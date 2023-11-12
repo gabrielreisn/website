@@ -37,9 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Todo
 
-1. sitemap
-2. robots.txt
 3. google analytics
 4. google search console
-5. metadata (title, canonical, description, og, twitter)
-6. json-ld schemas
+5. json-ld schemas

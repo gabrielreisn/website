@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://gabrielreis.dev
+
+# Sitemaps
+Sitemap: https://gabrielreis.dev/sitemap.xml
