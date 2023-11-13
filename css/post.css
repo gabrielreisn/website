@@ -78,3 +78,34 @@ a[href].direct-link:focus:visited,
   /* color: #919191; */
   color: var(--accent);
 }
+
+
+.anchor-toc {
+  text-decoration: none;
+  outline: none;
+}
+
+.anchor-toc:hover {
+  text-decoration: none;
+  color: var(--accent);
+}
+
+.anchor-toc h2 {
+  text-decoration: none;
+  margin-top: 5rem;
+}
+
+.anchor-toc h2:hover {
+  color: var(--accent);
+}
+
+.anchor-toc h2::after {
+  content: '';
+  padding-left: 4px;
+}
+
+.anchor-toc h2:hover::after {
+  content: '#';
+}
+
+

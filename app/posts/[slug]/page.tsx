@@ -4,6 +4,16 @@ import { getAllPublished, getSinglePost } from '@/clients/notion';
 import ReactMarkdown from 'react-markdown';
 import { generateDefaultMetadata } from '@/modules/metadata';
 
+const H2 = ({ children }: any) => {
+  const id = children.split(' ').join('-');
+
+  return (
+    <a id={id} href={`#${id}`} className="anchor-toc">
+      <h2>{children}</h2>
+    </a>
+  );
+};
+
 export const revalidate = 60;
 
 type PageProps = {
@@ -38,7 +48,13 @@ export default async function PostPage({ params }: PageProps) {
       </header>
 
       <main className="post__content">
-        <ReactMarkdown>{post.markdown.parent}</ReactMarkdown>
+        <ReactMarkdown
+          components={{
+            h2: H2,
+          }}
+        >
+          {post.markdown.parent}
+        </ReactMarkdown>
       </main>
 
       <aside className="post__aside">
