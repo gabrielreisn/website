@@ -19,6 +19,11 @@
       "text": "About Me",
       "url": "/about",
       "external": false
+    },
+    {
+      "text": "Portfolio",
+      "url": "/portfolio",
+      "external": true
     }
   ],
   "socialLinks": [
