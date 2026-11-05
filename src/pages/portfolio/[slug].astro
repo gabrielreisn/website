@@ -5,7 +5,7 @@ import Base from "@/layouts/Base.astro";
 import AnchoredHeading from "@/components/AnchoredHeading.astro";
 import { ProjectLinks, ProjectMeta, StackList } from "@/components/ProjectList";
 import { site } from "@/lib/site";
-import { toProjectSummary } from "@/lib/posts";
+import { imageUrl, toProjectSummary } from "@/lib/posts";
 
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite("/404");
@@ -19,16 +19,16 @@ if (!entry) return Astro.rewrite("/404");
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const project = toProjectSummary(entry);
+// No siteTitle: Base appends the site name to the (SEO panel) title itself.
 const seo = getSeoMeta(entry, {
-  siteTitle: site.name,
   siteUrl: site.url,
   path: `/portfolio/${entry.id}`,
-  defaultOgImage: site.defaultSocialImage,
+  defaultOgImage: new URL(imageUrl(entry.data.cover) ?? site.defaultSocialImage, site.url).href,
 });
 ---
 
 <Base
-  title={project.title}
+  title={seo.title}
   description={seo.description ?? project.summary}
   image={seo.ogImage}
   canonical={seo.canonical}

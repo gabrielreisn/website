@@ -1,46 +1,45 @@
 ---
+import { getEmDashEntry, getSeoMeta } from "emdash";
+import { Image, PortableText } from "emdash/ui";
 import Base from "@/layouts/Base.astro";
 import { site } from "@/lib/site";
+import { imageUrl } from "@/lib/posts";
+
+// Content lives in EmDash: Pages → "about".
+const { entry: page, error, cacheHint } = await getEmDashEntry("pages", "about");
+if (error) {
+  console.error("Failed to load about page:", error);
+  return new Response("Unable to load page", { status: 500 });
+}
+if (!page) return Astro.rewrite("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const seo = getSeoMeta(page, {
+  siteUrl: site.url,
+  path: "/about",
+  defaultOgImage: new URL(imageUrl(page.data.image) ?? site.defaultSocialImage, site.url).href,
+});
 ---
 
 <Base
-  title="About me"
-  description="Gabriel Reis is a frontend engineer from Brazil who builds customer-facing products, with a soft spot for web performance and design systems."
+  title={seo.title}
+  description={seo.description}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  content={{ collection: "pages", id: page.data.id, slug: "about" }}
 >
   <div>
-    <h1 class="mb-8">About {site.author.name}</h1>
-    <img
-      src={site.author.picture}
-      alt={`Portrait of ${site.author.name}`}
-      width="320"
-      height="320"
-      class="mx-auto mt-4 rounded-full border-4 border-black/70 min-[575px]:float-right min-[575px]:mt-2 min-[575px]:ml-4 min-[575px]:w-80"
-    />
-    <div class="[&>p+p]:mt-8">
-      <p>Hey there, stranger 👋</p>
-      <p>
-        I'm Gabriel, a frontend engineer from Brazil. I like building products people actually touch, and taking them
-        from a rough idea all the way to production. Along the way I've grown a soft spot for web performance, design
-        systems and automating the boring parts of the job.
-      </p>
-      <p>
-        I've built customer-facing features and A/B experiments at Pipefy, worked inside Splunk's team through
-        Truelogic, and led projects end to end at Circuit (now Spoke). On the side I build my own things, like
-        <a href="/portfolio/cymba">Cymba</a>, a macOS app that keeps track of my investments. The longer version is in
-        my <a href="/portfolio">portfolio</a>.
-      </p>
-      <p>
-        This website is my digital garden: a place where notes grow over time, mistakes included, in the spirit of
-        learning in public. If something here is useful, or plain wrong, I'd love to hear about it.
-      </p>
-      <p>
-        Away from the keyboard you'll usually find me cooking, digging for new music, dabbling in art 🎨 or trying to
-        get back into photography 📷.
-      </p>
-      <p>
-        Want to talk? Reach me through any of the links below, or
-        <a href="https://calendly.com/gabrielreisnf/30min">grab some time with me</a>.
-      </p>
+    <h1 class="mb-8" {...page.edit.title}>{page.data.title}</h1>
+    {
+      page.data.image && (
+        <div class="mx-auto mt-4 w-full max-w-80 overflow-hidden rounded-full border-4 border-black/70 min-[575px]:float-right min-[575px]:mt-2 min-[575px]:ml-4 min-[575px]:w-80 [&_img]:mt-0">
+          <Image image={page.data.image} width={320} height={320} />
+        </div>
+      )
+    }
+    <div class="content [&>p:first-child]:mt-0">
+      <PortableText value={page.data.content} />
     </div>
   </div>
 </Base>

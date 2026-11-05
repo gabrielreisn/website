@@ -75,7 +75,34 @@ export type ProjectSummary = {
   featured: boolean;
   stack: Tag[];
   kind: string | null;
+  cover: Cover | null;
 };
+
+export type Cover = { src: string; alt: string; width?: number; height?: number; color?: string };
+
+type ImageValue = {
+  id?: string;
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  dominantColor?: string;
+  meta?: Record<string, unknown>;
+};
+
+/** Public URL for an EmDash image field value (local media is served from its storage key). */
+export function imageUrl(image: ImageValue | null | undefined): string | null {
+  if (!image) return null;
+  if (image.src) return image.src;
+  const key = typeof image.meta?.storageKey === "string" ? image.meta.storageKey : null;
+  return key ? `/_emdash/api/media/file/${key}` : null;
+}
+
+function toCover(image: ImageValue | null | undefined): Cover | null {
+  const src = imageUrl(image);
+  if (!image || !src) return null;
+  return { src, alt: image.alt ?? "", width: image.width, height: image.height, color: image.dominantColor };
+}
 
 type ProjectEntry = { id: string; data: Project };
 
@@ -91,6 +118,7 @@ export function toProjectSummary(project: ProjectEntry): ProjectSummary {
     featured: project.data.featured ?? false,
     stack: (project.data.terms?.stack ?? []).map((t) => ({ slug: t.slug, label: t.label })),
     kind: project.data.kind || null,
+    cover: toCover(project.data.cover),
   };
 }
 

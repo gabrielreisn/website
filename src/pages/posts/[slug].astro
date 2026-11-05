@@ -19,8 +19,8 @@ if (error) {
 if (!post) return Astro.rewrite("/404");
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
+// No siteTitle: Base appends the site name to the (SEO panel) title itself.
 const seo = getSeoMeta(post, {
-  siteTitle: site.name,
   siteUrl: site.url,
   path: `/posts/${post.id}`,
   defaultOgImage: site.defaultSocialImage,
@@ -31,7 +31,7 @@ const publishedAt = post.data.publishedAt;
 ---
 
 <Base
-  title={post.data.title}
+  title={seo.title}
   description={seo.description ?? post.data.description}
   image={seo.ogImage}
   canonical={seo.canonical}
