@@ -68,6 +68,18 @@
           "searchable": true
         },
         {
+          "slug": "kind",
+          "label": "Type",
+          "type": "select",
+          "validation": {
+            "options": [
+              "Working project",
+              "Personal project",
+              "Conference"
+            ]
+          }
+        },
+        {
           "slug": "summary",
           "label": "Summary",
           "type": "text"
@@ -108,7 +120,12 @@
           "type": "portableText",
           "searchable": true
         }
-      ]
+      ],
+      "admin": {
+        "listColumns": [
+          "kind"
+        ]
+      }
     }
   ],
   "taxonomies": [
@@ -131,29 +148,6 @@
         "projects"
       ],
       "terms": []
-    },
-    {
-      "name": "category",
-      "label": "Categories",
-      "labelSingular": "Category",
-      "hierarchical": false,
-      "collections": [
-        "projects"
-      ],
-      "terms": [
-        {
-          "slug": "work",
-          "label": "Work"
-        },
-        {
-          "slug": "personal-projects",
-          "label": "Personal projects"
-        },
-        {
-          "slug": "talks",
-          "label": "Talks"
-        }
-      ]
     }
   ]
 }

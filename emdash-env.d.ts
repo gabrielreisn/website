@@ -25,6 +25,7 @@ export interface Project {
   slug: string | null;
   status: string;
   title: string;
+  kind?: string;
   summary?: string;
   role?: string;
   period?: string;

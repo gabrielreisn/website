@@ -1,23 +1,17 @@
 ---
-import { getEmDashCollection, getTaxonomyTermsWithCacheHint } from "emdash";
+import { getEmDashCollection } from "emdash";
 import Base from "@/layouts/Base.astro";
 import { ProjectList } from "@/components/ProjectList";
-import { groupByCategory, sortProjects, toProjectSummary } from "@/lib/posts";
+import { groupByKind, sortProjects, toProjectSummary } from "@/lib/posts";
 
-const [projectsResult, categoryResult] = await Promise.all([
-  getEmDashCollection("projects", { orderBy: { published_at: "desc" }, limit: 100 }),
-  getTaxonomyTermsWithCacheHint("category", { includeCounts: false }),
-]);
+const projectsResult = await getEmDashCollection("projects", { orderBy: { published_at: "desc" }, limit: 100 });
 if (projectsResult.error) {
   console.error("Failed to load projects:", projectsResult.error);
   return new Response("Unable to load projects", { status: 500 });
 }
-if (Astro.cache?.enabled) {
-  Astro.cache.set(projectsResult.cacheHint);
-  Astro.cache.set(categoryResult.cacheHint);
-}
+if (Astro.cache?.enabled) Astro.cache.set(projectsResult.cacheHint);
 
-const groups = groupByCategory(sortProjects(projectsResult.entries).map(toProjectSummary));
+const groups = groupByKind(sortProjects(projectsResult.entries).map(toProjectSummary));
 ---
 
 <Base title="Portfolio" description="Things I've built, and what I learned building them.">
@@ -27,7 +21,7 @@ const groups = groupByCategory(sortProjects(projectsResult.entries).map(toProjec
   {
     groups.map((group, i) => (
       <section class:list={[i > 0 && "mt-16"]}>
-        {group.category && <h2 class="mb-4 text-3xl">{group.category.label}</h2>}
+        {group.heading && <h2 class="mb-4 text-3xl">{group.heading}</h2>}
         <ProjectList projects={group.projects} />
       </section>
     ))

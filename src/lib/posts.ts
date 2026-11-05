@@ -74,7 +74,7 @@ export type ProjectSummary = {
   repository: string | null;
   featured: boolean;
   stack: Tag[];
-  category: Tag | null;
+  kind: string | null;
 };
 
 type ProjectEntry = { id: string; data: Project };
@@ -90,24 +90,28 @@ export function toProjectSummary(project: ProjectEntry): ProjectSummary {
     repository: project.data.repository || null,
     featured: project.data.featured ?? false,
     stack: (project.data.terms?.stack ?? []).map((t) => ({ slug: t.slug, label: t.label })),
-    category: project.data.terms?.category?.[0]
-      ? { slug: project.data.terms.category[0].slug, label: project.data.terms.category[0].label }
-      : null,
+    kind: project.data.kind || null,
   };
 }
 
-/** Section order on /portfolio; categories not listed here come after, then uncategorized. */
-const CATEGORY_ORDER = ["work", "personal-projects", "talks"];
+/** `kind` values (the "Type" select in the admin), in /portfolio section order, with their headings. */
+const KIND_SECTIONS: Record<string, string> = {
+  "Working project": "Working projects",
+  "Personal project": "Personal projects",
+  Conference: "Conferences",
+};
 
-export function groupByCategory(projects: ProjectSummary[]): Array<{ category: Tag | null; projects: ProjectSummary[] }> {
-  const groups = new Map<string, { category: Tag | null; projects: ProjectSummary[] }>();
+export function groupByKind(projects: ProjectSummary[]): Array<{ heading: string | null; projects: ProjectSummary[] }> {
+  const order = Object.keys(KIND_SECTIONS);
+  const groups = new Map<string, ProjectSummary[]>();
   for (const project of projects) {
-    const key = project.category?.slug ?? "";
-    if (!groups.has(key)) groups.set(key, { category: project.category, projects: [] });
-    groups.get(key)!.projects.push(project);
+    const key = project.kind ?? "";
+    groups.set(key, [...(groups.get(key) ?? []), project]);
   }
-  const rank = (key: string) => (key === "" ? Infinity : CATEGORY_ORDER.indexOf(key) === -1 ? 99 : CATEGORY_ORDER.indexOf(key));
-  return [...groups.entries()].sort(([a], [b]) => rank(a) - rank(b)).map(([, group]) => group);
+  const rank = (kind: string) => (kind === "" ? Infinity : order.includes(kind) ? order.indexOf(kind) : order.length);
+  return [...groups.entries()]
+    .sort(([a], [b]) => rank(a) - rank(b))
+    .map(([kind, items]) => ({ heading: kind ? (KIND_SECTIONS[kind] ?? kind) : null, projects: items }));
 }
 
 /** Featured first, then most recently published. */

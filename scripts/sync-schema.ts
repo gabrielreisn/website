@@ -18,6 +18,7 @@ type SeedField = {
   required?: boolean;
   searchable?: boolean;
   indexed?: boolean;
+  validation?: Record<string, unknown>;
 };
 type SeedCollection = {
   slug: string;
@@ -26,6 +27,7 @@ type SeedCollection = {
   description?: string;
   urlPattern?: string;
   supports?: string[];
+  admin?: { listColumns?: string[] };
   fields: SeedField[];
 };
 type SeedTaxonomy = {
@@ -45,12 +47,20 @@ const prefix = dryRun ? "[dry-run] would" : "→";
 console.log(`Syncing schema to ${baseUrl}${dryRun ? " (dry run)" : ""}`);
 
 const existing = new Set((await client.collections()).map((c) => c.slug));
+const pendingAdmin: Array<[string, { listColumns?: string[] }]> = [];
 
 for (const collection of seed.collections) {
   let fields = new Set<string>();
 
   if (existing.has(collection.slug)) {
-    fields = new Set((await client.collection(collection.slug)).fields.map((f) => f.slug));
+    const current = await client.collection(collection.slug);
+    fields = new Set(current.fields.map((f) => f.slug));
+    const currentAdmin = (current as typeof current & { admin?: { listColumns?: string[] } }).admin;
+    if (collection.admin && JSON.stringify(collection.admin.listColumns ?? []) !== JSON.stringify(currentAdmin?.listColumns ?? [])) {
+      console.log(`${prefix} set "${collection.slug}" admin list columns: ${collection.admin.listColumns?.join(", ")}`);
+      // Fields must exist before they can be list columns, so this runs after the fields loop below.
+      pendingAdmin.push([collection.slug, collection.admin]);
+    }
   } else {
     console.log(`${prefix} create collection "${collection.slug}"`);
     if (!dryRun) {
@@ -63,6 +73,7 @@ for (const collection of seed.collections) {
         supports: collection.supports,
       });
     }
+    if (collection.admin) pendingAdmin.push([collection.slug, collection.admin]);
   }
 
   for (const [index, field] of collection.fields.entries()) {
@@ -76,11 +87,15 @@ for (const collection of seed.collections) {
         required: field.required,
         searchable: field.searchable,
         indexed: field.indexed,
-        validation: null,
+        validation: field.validation ?? null,
         sortOrder: index,
       });
     }
   }
+}
+
+for (const [slug, admin] of pendingAdmin) {
+  if (!dryRun) await rawRequest("PUT", `/schema/collections/${slug}`, { admin });
 }
 
 // The API also returns `collections`, which the client type omits.
