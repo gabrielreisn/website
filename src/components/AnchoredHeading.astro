@@ -1,0 +1,25 @@
+---
+/**
+ * Portable Text override for h2/h3 blocks: wraps the heading in a permalink,
+ * like the original site's `H2` react-markdown component.
+ */
+import { headingId } from "@/lib/posts";
+
+interface Props {
+  node: {
+    style?: string;
+    children?: Array<{ _type: string; text?: string }>;
+  };
+  index?: number;
+  isInline?: boolean;
+}
+
+const { node } = Astro.props;
+const text = (node.children ?? []).map((c) => c.text ?? "").join("");
+const id = headingId(text);
+const Tag = node.style === "h3" ? "h3" : "h2";
+---
+
+<a id={id} href={`#${id}`} class="anchor-heading">
+  <Tag><slot /></Tag>
+</a>

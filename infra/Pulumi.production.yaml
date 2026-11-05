@@ -1,0 +1,9 @@
+config:
+  cloudflare:apiToken:
+    secure: AAABAG1K2ZxgFqyo/NV2AOJn5qttmqdBlIG3Stf2s36AmbiF3etYFZ1Vjk44yB1pI1KvDZgQlayuhf2uI0QeBQatTepBgCYTFo7L8tKoUj/hbVv3HA==
+  gabrielreis-dev:accountId: cbfda121094e73a64143ffc03dcbf66f
+  gabrielreis-dev:zoneId: ca6a220a89e12bd467a05dee3dfc573e
+  gabrielreis-dev:domains:
+    - gabrielreis.dev
+  gabrielreis-dev:emdashEncryptionKey:
+    secure: AAABAG1x3t0BeZ7CPMJL6FhQUFFBYICSz9cME7bMqKTd3ncCB7UxrZ1he1QrgN7n3XxJqXm9usLu9JZqSN/O7uEvhl2gr+gXAXEMS7yZ7+DC9Rr75Z9FpjY=

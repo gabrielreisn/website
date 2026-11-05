@@ -1,37 +1,29 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+node_modules
 
-# testing
-/coverage
+# build output
+dist
+.astro
+.wrangler
 
-# next.js
-/.next/
-/out/
+# EmDash local state
+.emdash/migrations.json
+uploads
+data.db
+data.db-*
 
-# production
-/build
+# generated at deploy time by Pulumi (contains resource IDs)
+wrangler.production.jsonc
+
+# environment / wrangler secrets
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
 
 # misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
 *.tsbuildinfo
-next-env.d.ts

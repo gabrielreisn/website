@@ -1,0 +1,82 @@
+---
+import { EmDashBodyEnd, EmDashBodyStart, EmDashHead } from "emdash/ui";
+import { createPublicPageContext } from "emdash/page";
+import { Font } from "astro:assets";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { site } from "@/lib/site";
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string | null;
+  image?: string | null;
+  canonical?: string | null;
+  robots?: string | null;
+  type?: "website" | "article";
+  publishedTime?: string | null;
+  modifiedTime?: string | null;
+  /** Set on CMS-backed pages so EmDash can overlay the entry's SEO panel values. */
+  content?: { collection: string; id: string; slug?: string | null };
+}
+
+const {
+  title,
+  description = site.description,
+  image = site.defaultSocialImage,
+  canonical,
+  robots,
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  content,
+} = Astro.props;
+
+const fullTitle = title === site.name ? title : `${title} | ${site.name}`;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site.url).href;
+
+// EmDashHead renders <meta>, Open Graph, Twitter cards, canonical and JSON-LD
+// from this context (replaces the old modules/metadata.ts).
+const page = createPublicPageContext({
+  Astro,
+  kind: content ? "content" : "custom",
+  pageType: type,
+  title: fullTitle,
+  pageTitle: fullTitle,
+  description,
+  canonical: canonicalUrl,
+  image,
+  content,
+  seo: { ogImage: image, robots },
+  articleMeta: { publishedTime, modifiedTime, author: site.author.name },
+  siteName: site.name,
+});
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <Font cssVariable="--font-ibm-plex-sans" preload />
+    <Font cssVariable="--font-inconsolata" />
+    <title>{fullTitle}</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦞</text></svg>"
+    />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} RSS Feed`} href="/rss.xml" />
+    <EmDashHead page={page} />
+  </head>
+  <body>
+    <EmDashBodyStart page={page} />
+    <div class="grid min-h-full grid-rows-[auto_minmax(0,1fr)_auto]">
+      <Header currentPath={Astro.url.pathname} />
+      <main class="mx-auto flex w-full max-w-content min-w-0 flex-col px-4 pb-16">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <EmDashBodyEnd page={page} />
+  </body>
+</html>

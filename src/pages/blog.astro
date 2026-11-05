@@ -1,0 +1,40 @@
+---
+import { getEmDashCollection, getTaxonomyTermsWithCacheHint } from "emdash";
+import Base from "@/layouts/Base.astro";
+import { PostList } from "@/components/PostList";
+import { TagList } from "@/components/TagList";
+import { toSummary } from "@/lib/posts";
+
+const PAGE_SIZE = 20;
+const cursor = Astro.url.searchParams.get("cursor") || undefined;
+
+const [postsResult, tagsResult] = await Promise.all([
+  getEmDashCollection("posts", { orderBy: { published_at: "desc" }, limit: PAGE_SIZE, cursor }),
+  getTaxonomyTermsWithCacheHint("tag", { includeCounts: false }),
+]);
+if (postsResult.error) {
+  console.error("Failed to load posts:", postsResult.error);
+  return new Response("Unable to load posts", { status: 500 });
+}
+if (Astro.cache?.enabled) {
+  Astro.cache.set(postsResult.cacheHint);
+  Astro.cache.set(tagsResult.cacheHint);
+}
+
+const posts = postsResult.entries.map(toSummary);
+const tags = tagsResult.data.map((t) => ({ slug: t.slug, label: t.label }));
+const next = postsResult.nextCursor ? `/blog?cursor=${encodeURIComponent(postsResult.nextCursor)}` : null;
+---
+
+<Base title="Blog">
+  <h1>All Posts</h1>
+  {
+    tags.length > 0 && (
+      <div class="mb-4 flex flex-wrap gap-x-4 gap-y-2 pt-2 text-sm break-keep">
+        <TagList tags={tags} variant="pill" />
+      </div>
+    )
+  }
+  <PostList posts={posts} />
+  {next && <a class="mx-auto mt-16 inline-block w-fit text-lg text-current" href={next}>Older Posts</a>}
+</Base>

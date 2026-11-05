@@ -1,0 +1,28 @@
+// Local development config (used by `astro dev` / the Cloudflare Vite plugin).
+//
+// Production resources (D1, R2, custom domain, secrets) are owned by Pulumi in
+// ./infra. At deploy time Pulumi writes `wrangler.production.jsonc` with the real
+// resource IDs and builds against it — don't add IDs here.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gabrielreis-dev",
+  "main": "./src/worker.ts",
+  "compatibility_date": "2026-02-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "gabrielreis-dev-db",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "gabrielreis-dev-media",
+    },
+  ],
+  // EmDash maintenance: scheduled publishing, plugin tasks, backups.
+  "triggers": {
+    "crons": ["* * * * *"],
+  },
+}

@@ -1,0 +1,72 @@
+---
+import { decodeSlug, getEmDashEntry, getSeoMeta } from "emdash";
+import { PortableText } from "emdash/ui";
+import Base from "@/layouts/Base.astro";
+import AnchoredHeading from "@/components/AnchoredHeading.astro";
+import { ReadableDateTime } from "@/components/ReadableDateTime";
+import { TagList } from "@/components/TagList";
+import { site } from "@/lib/site";
+import { formatDate, readingTime, tagsOf } from "@/lib/posts";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite("/404");
+
+const { entry: post, error, isPreview, cacheHint } = await getEmDashEntry("posts", slug);
+if (error) {
+  console.error("Failed to load post:", error);
+  return new Response("Unable to load post", { status: 500 });
+}
+if (!post) return Astro.rewrite("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const seo = getSeoMeta(post, {
+  siteTitle: site.name,
+  siteUrl: site.url,
+  path: `/posts/${post.id}`,
+  defaultOgImage: site.defaultSocialImage,
+});
+
+const tags = tagsOf(post);
+const publishedAt = post.data.publishedAt;
+---
+
+<Base
+  title={post.data.title}
+  description={seo.description ?? post.data.description}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  type="article"
+  publishedTime={publishedAt?.toISOString() ?? null}
+  modifiedTime={post.data.updatedAt.toISOString()}
+  content={{ collection: "posts", id: post.data.id, slug }}
+>
+  <article class="flex flex-col justify-center">
+    {isPreview && <p class="mb-8 border-l-3 border-accent pl-4 text-sm text-muted italic">Unpublished preview</p>}
+
+    <header>
+      <h1 {...post.edit.title}>{post.data.title}</h1>
+      <div class="space-x-2 text-[0.9rem] opacity-60">
+        <ReadableDateTime
+          date={formatDate(publishedAt)}
+          isoDate={publishedAt?.toISOString() ?? null}
+          readingTime={readingTime(post.data.content)}
+        />
+      </div>
+    </header>
+
+    <div class="content mt-16">
+      <PortableText value={post.data.content} components={{ block: { h2: AnchoredHeading, h3: AnchoredHeading } }} />
+    </div>
+
+    {
+      tags.length > 0 && (
+        <aside class="mt-8">
+          <div class="space-x-2 text-sm opacity-80">
+            <TagList tags={tags} variant="plain" />
+          </div>
+        </aside>
+      )
+    }
+  </article>
+</Base>

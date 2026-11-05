@@ -1,0 +1,33 @@
+name: gabrielreis-dev
+description: Cloudflare infrastructure for gabrielreis.dev (Astro + EmDash on Workers, D1, R2, KV)
+runtime:
+  name: nodejs
+  options:
+    packagemanager: pnpm
+    typescript: true
+config:
+  # Cloudflare account that owns every resource.
+  accountId:
+    type: string
+  # Zone ID of the domain (only needed when `domains` is set).
+  zoneId:
+    type: string
+    default: ""
+  # Hostnames served by the Worker, e.g. ["gabrielreis.dev", "www.gabrielreis.dev"].
+  domains:
+    type: array
+    items:
+      type: string
+    default: []
+  workerName:
+    type: string
+    default: gabrielreis-dev
+  # D1 primary location hint: wnam, enam, weur, eeur, apac, oc.
+  d1LocationHint:
+    type: string
+    default: enam
+  # Protect D1 / R2 from `pulumi destroy` (they hold all CMS content and media).
+  protectData:
+    type: boolean
+    default: true
+  # Also required (secret): emdashEncryptionKey — see README.

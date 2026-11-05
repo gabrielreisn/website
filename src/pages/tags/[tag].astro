@@ -1,0 +1,26 @@
+---
+import { decodeSlug, getEmDashCollection, getTerm } from "emdash";
+import Base from "@/layouts/Base.astro";
+import { PostList } from "@/components/PostList";
+import { toSummary } from "@/lib/posts";
+
+const slug = decodeSlug(Astro.params.tag);
+const tag = slug ? await getTerm("tag", slug) : null;
+if (!tag) return Astro.rewrite("/404");
+
+const { entries, error, cacheHint } = await getEmDashCollection("posts", {
+  where: { tag: tag.slug },
+  orderBy: { published_at: "desc" },
+  limit: 100,
+});
+if (error) {
+  console.error("Failed to load posts:", error);
+  return new Response("Unable to load posts", { status: 500 });
+}
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+<Base title={tag.label} description={`Posts tagged #${tag.label}`}>
+  <h1>{tag.label}</h1>
+  <PostList posts={entries.map(toSummary)} />
+</Base>
