@@ -3,16 +3,44 @@ import Base from "@/layouts/Base.astro";
 import { site } from "@/lib/site";
 ---
 
-<Base title="About me">
+<Base
+  title="About me"
+  description="Gabriel Reis is a frontend engineer from Brazil who builds customer-facing products, with a soft spot for web performance and design systems."
+>
   <div>
     <h1 class="mb-8">About {site.author.name}</h1>
     <img
       src={site.author.picture}
-      alt=""
+      alt={`Portrait of ${site.author.name}`}
       width="320"
       height="320"
       class="mx-auto mt-4 rounded-full border-4 border-black/70 min-[575px]:float-right min-[575px]:mt-2 min-[575px]:ml-4 min-[575px]:w-80"
     />
-    {site.author.about.map((paragraph, i) => <p class:list={[i > 0 && "mt-8"]}>{paragraph}</p>)}
+    <div class="[&>p+p]:mt-8">
+      <p>Hey there, stranger 👋</p>
+      <p>
+        I'm Gabriel, a frontend engineer from Brazil. I like building products people actually touch, and taking them
+        from a rough idea all the way to production. Along the way I've grown a soft spot for web performance, design
+        systems and automating the boring parts of the job.
+      </p>
+      <p>
+        I've built customer-facing features and A/B experiments at Pipefy, worked inside Splunk's team through
+        Truelogic, and led projects end to end at Circuit (now Spoke). On the side I build my own things, like
+        <a href="/portfolio/cymba">Cymba</a>, a macOS app that keeps track of my investments. The longer version is in
+        my <a href="/portfolio">portfolio</a>.
+      </p>
+      <p>
+        This website is my digital garden: a place where notes grow over time, mistakes included, in the spirit of
+        learning in public. If something here is useful, or plain wrong, I'd love to hear about it.
+      </p>
+      <p>
+        Away from the keyboard you'll usually find me cooking, digging for new music, dabbling in art 🎨 or trying to
+        get back into photography 📷.
+      </p>
+      <p>
+        Want to talk? Reach me through any of the links below, or
+        <a href="https://calendly.com/gabrielreisnf/30min">grab some time with me</a>.
+      </p>
+    </div>
   </div>
 </Base>

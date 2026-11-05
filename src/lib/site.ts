@@ -11,10 +11,6 @@ export const site = {
     name: "Gabriel Reis",
     email: "gabrielreisnf@gmail.com",
     picture: "/me.jpeg",
-    about: [
-      "Hey there stranger 👋",
-      "I'm a 28y Software Engineer based in Brazil who enjoys cooking, music, a bit of art 🎨 and photography (trying to get back to old habits)",
-    ],
   },
   headerLinks: [
     { text: "Blog", url: "/blog" },
