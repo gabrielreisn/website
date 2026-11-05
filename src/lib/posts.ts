@@ -74,6 +74,7 @@ export type ProjectSummary = {
   repository: string | null;
   featured: boolean;
   stack: Tag[];
+  category: Tag | null;
 };
 
 type ProjectEntry = { id: string; data: Project };
@@ -89,7 +90,24 @@ export function toProjectSummary(project: ProjectEntry): ProjectSummary {
     repository: project.data.repository || null,
     featured: project.data.featured ?? false,
     stack: (project.data.terms?.stack ?? []).map((t) => ({ slug: t.slug, label: t.label })),
+    category: project.data.terms?.category?.[0]
+      ? { slug: project.data.terms.category[0].slug, label: project.data.terms.category[0].label }
+      : null,
   };
+}
+
+/** Section order on /portfolio; categories not listed here come after, then uncategorized. */
+const CATEGORY_ORDER = ["work", "personal-projects", "talks"];
+
+export function groupByCategory(projects: ProjectSummary[]): Array<{ category: Tag | null; projects: ProjectSummary[] }> {
+  const groups = new Map<string, { category: Tag | null; projects: ProjectSummary[] }>();
+  for (const project of projects) {
+    const key = project.category?.slug ?? "";
+    if (!groups.has(key)) groups.set(key, { category: project.category, projects: [] });
+    groups.get(key)!.projects.push(project);
+  }
+  const rank = (key: string) => (key === "" ? Infinity : CATEGORY_ORDER.indexOf(key) === -1 ? 99 : CATEGORY_ORDER.indexOf(key));
+  return [...groups.entries()].sort(([a], [b]) => rank(a) - rank(b)).map(([, group]) => group);
 }
 
 /** Featured first, then most recently published. */

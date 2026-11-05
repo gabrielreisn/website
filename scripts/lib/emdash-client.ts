@@ -29,13 +29,3 @@ export function rawRequest<T>(method: string, path: string, body?: unknown): Pro
 }
 
 export const dryRun = process.argv.includes("--dry-run");
-
-export function slugify(text: string): string {
-  return text
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}

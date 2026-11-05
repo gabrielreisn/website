@@ -103,9 +103,14 @@ for (const taxonomy of seed.taxonomies ?? []) {
     }
     continue;
   }
-  const missing = (taxonomy.collections ?? []).filter((c) => !(current.collections ?? []).includes(c));
+  const attached = current.collections ?? [];
+  const missing = (taxonomy.collections ?? []).filter((c) => !attached.includes(c));
   if (missing.length) {
-    console.warn(`! taxonomy "${taxonomy.name}" isn't attached to: ${missing.join(", ")} — attach it in the admin.`);
+    console.log(`${prefix} attach taxonomy "${taxonomy.name}" to ${missing.join(", ")}`);
+    if (!dryRun) {
+      // Union, so collections that already use the taxonomy keep it.
+      await rawRequest("PUT", `/taxonomies/${taxonomy.name}`, { collections: [...attached, ...missing] });
+    }
   }
 }
 

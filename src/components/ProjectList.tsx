@@ -1,12 +1,20 @@
 import type { ProjectSummary } from "@/lib/posts";
 
+/** Talks link to slides or a recording rather than a site. */
+function linkLabel(url: string): string {
+  const host = new URL(url).hostname;
+  if (host === "docs.google.com" || host.endsWith("slides.com")) return "view slides";
+  if (host === "youtu.be" || host.endsWith("youtube.com") || host.endsWith("vimeo.com")) return "watch the talk";
+  return "visit site";
+}
+
 function ProjectLinks({ url, repository }: Pick<ProjectSummary, "url" | "repository">) {
   if (!url && !repository) return null;
   return (
     <div className="mt-4 flex gap-6 text-base">
       {url && (
         <a href={url} target="_blank" rel="noopener noreferrer">
-          visit site
+          {linkLabel(url)}
         </a>
       )}
       {repository && (

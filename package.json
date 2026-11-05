@@ -16,8 +16,7 @@
     "cf-typegen": "wrangler types",
     "infra:preview": "pnpm --dir infra exec pulumi preview",
     "infra:up": "pnpm --dir infra exec pulumi up",
-    "emdash:sync-schema": "node scripts/sync-schema.ts",
-    "emdash:import": "node scripts/import-content.ts"
+    "emdash:sync-schema": "node scripts/sync-schema.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.4",

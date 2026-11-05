@@ -26,8 +26,7 @@ src/
   lib/                  site config + post helpers
   styles/global.css     Tailwind entry, design tokens, rich-text styles
 infra/                  Pulumi program (D1, R2, KV, Worker deploy, custom domains)
-scripts/                EmDash maintenance: schema sync, content import
-content/notion/         Entries exported from Notion (JSON), input for the importer
+scripts/                EmDash maintenance: schema sync
 ```
 
 ## Local development
@@ -47,7 +46,7 @@ D1, R2 and KV are simulated locally by Wrangler (state lives in `.wrangler/state
 
 `posts` mirrors the old Notion database:
 
-| Notion field | EmDash                                           |
+| Old Notion field | EmDash                                           |
 | ------------ | ------------------------------------------------ |
 | Title        | `title` (string)                                 |
 | Slug         | built-in entry slug → `/posts/{slug}`            |
@@ -66,10 +65,6 @@ EMDASH_URL=https://gabrielreis.dev EMDASH_TOKEN=<token> pnpm emdash:sync-schema 
 ```
 
 It's additive only (never renames or deletes). Create the token in the admin under **Settings → API Tokens**.
-
-## Importing content
-
-`pnpm emdash:import` reads `content/notion/*.json` and creates or updates entries by slug, keeping the original publish dates, creating missing tags, and re-hosting remote images in the EmDash media library (Notion file URLs expire). Use `--dry-run` first; same `EMDASH_URL` / `EMDASH_TOKEN` variables as above. Against `pnpm dev` no token is needed.
 
 ## Deploying (Pulumi → Cloudflare)
 
