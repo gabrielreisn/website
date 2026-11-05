@@ -133,18 +133,28 @@ const deploy = new command.local.Command(
     interpreter: ["/bin/bash", "-c"],
     create: deployScript,
     update: deployScript,
-    delete: `pnpm exec wrangler delete --name ${workerName} --force`,
+    // No `delete` script on purpose: `pulumi destroy` leaves the Worker in place
+    // (remove it with `pnpm exec wrangler delete`), so a replacement can never
+    // take the live site down.
+    // Changing any input here runs `update` in place. Don't use `triggers`:
+    // they force a *replacement*, which would run the old resource's `delete`
+    // (wrangler delete) right after deploying — taking the site down.
     environment: {
       CLOUDFLARE_ACCOUNT_ID: accountId,
       WRANGLER_CONFIG: "wrangler.production.jsonc",
       WRANGLER_CONFIG_JSON: wranglerConfig,
       EMDASH_ENCRYPTION_KEY: encryptionKey,
+      SOURCE_HASH: sourceHash,
       ...(apiToken ? { CLOUDFLARE_API_TOKEN: apiToken } : {}),
     },
-    triggers: [sourceHash, wranglerConfig],
     logging: "stdoutAndStderr",
   },
-  { dependsOn: [db, media, sessions], additionalSecretOutputs: ["stdout", "stderr"] },
+  {
+    dependsOn: [db, media, sessions],
+    additionalSecretOutputs: ["stdout", "stderr"],
+    // Legacy input from the first deploy; ignoring it avoids a one-off replacement.
+    ignoreChanges: ["triggers"],
+  },
 );
 
 // ── Custom domains ─────────────────────────────────────────────────────────

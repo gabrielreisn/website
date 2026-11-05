@@ -1,5 +1,5 @@
 import { extractPlainText, type PortableTextBlock } from "emdash";
-import type { Post } from "../../emdash-env";
+import type { Post, Project } from "../../emdash-env";
 
 /** Plain, serializable shape handed to the React components. */
 export type PostSummary = {
@@ -60,4 +60,43 @@ export function headingId(text: string): string {
     .trim()
     .replace(/[^\p{L}\p{N}\s-]/gu, "")
     .replace(/\s+/g, "-");
+}
+
+// ── Portfolio ──────────────────────────────────────────────────────────────
+
+export type ProjectSummary = {
+  slug: string;
+  title: string;
+  summary: string;
+  role: string | null;
+  period: string | null;
+  url: string | null;
+  repository: string | null;
+  featured: boolean;
+  stack: Tag[];
+};
+
+type ProjectEntry = { id: string; data: Project };
+
+export function toProjectSummary(project: ProjectEntry): ProjectSummary {
+  return {
+    slug: project.id,
+    title: project.data.title,
+    summary: project.data.summary || excerpt(extractPlainText(project.data.content)),
+    role: project.data.role || null,
+    period: project.data.period || null,
+    url: project.data.url || null,
+    repository: project.data.repository || null,
+    featured: project.data.featured ?? false,
+    stack: (project.data.terms?.stack ?? []).map((t) => ({ slug: t.slug, label: t.label })),
+  };
+}
+
+/** Featured first, then most recently published. */
+export function sortProjects<T extends ProjectEntry>(projects: T[]): T[] {
+  return [...projects].sort(
+    (a, b) =>
+      Number(b.data.featured ?? false) - Number(a.data.featured ?? false) ||
+      (b.data.publishedAt?.getTime() ?? 0) - (a.data.publishedAt?.getTime() ?? 0),
+  );
 }

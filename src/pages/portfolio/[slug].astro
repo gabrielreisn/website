@@ -1,0 +1,59 @@
+---
+import { decodeSlug, getEmDashEntry, getSeoMeta } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+import Base from "@/layouts/Base.astro";
+import AnchoredHeading from "@/components/AnchoredHeading.astro";
+import { ProjectLinks, ProjectMeta, StackList } from "@/components/ProjectList";
+import { site } from "@/lib/site";
+import { toProjectSummary } from "@/lib/posts";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite("/404");
+
+const { entry, error, isPreview, cacheHint } = await getEmDashEntry("projects", slug);
+if (error) {
+  console.error("Failed to load project:", error);
+  return new Response("Unable to load project", { status: 500 });
+}
+if (!entry) return Astro.rewrite("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const project = toProjectSummary(entry);
+const seo = getSeoMeta(entry, {
+  siteTitle: site.name,
+  siteUrl: site.url,
+  path: `/portfolio/${entry.id}`,
+  defaultOgImage: site.defaultSocialImage,
+});
+---
+
+<Base
+  title={project.title}
+  description={seo.description ?? project.summary}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  type="article"
+  publishedTime={entry.data.publishedAt?.toISOString() ?? null}
+  modifiedTime={entry.data.updatedAt.toISOString()}
+  content={{ collection: "projects", id: entry.data.id, slug }}
+>
+  <article class="flex flex-col justify-center">
+    {isPreview && <p class="mb-8 border-l-3 border-accent pl-4 text-sm text-muted italic">Unpublished preview</p>}
+
+    <header>
+      <a href="/portfolio" class="text-sm text-muted">← all projects</a>
+      <h1 class="mt-4" {...entry.edit.title}>{project.title}</h1>
+      <div class="mt-2"><ProjectMeta role={project.role} period={project.period} /></div>
+      {project.summary && <p class="mt-4 text-2xl">{project.summary}</p>}
+      <div class="mt-4"><StackList stack={project.stack} /></div>
+      <ProjectLinks url={project.url} repository={project.repository} />
+    </header>
+
+    {entry.data.cover && <div class="mt-12"><Image image={entry.data.cover} priority /></div>}
+
+    <div class="content mt-16">
+      <PortableText value={entry.data.content} components={{ block: { h2: AnchoredHeading, h3: AnchoredHeading } }} />
+    </div>
+  </article>
+</Base>

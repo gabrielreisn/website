@@ -22,10 +22,12 @@ src/
   live.config.ts        EmDash live content collection
   layouts/Base.astro    HTML shell, SEO via <EmDashHead>
   components/*.tsx      React UI (Header, Footer, PostList, TagList, …)
-  pages/                /, /blog, /about, /posts/[slug], /tags/[tag], rss, sitemap, robots
+  pages/                /, /blog, /about, /posts/[slug], /tags/[tag], /portfolio, rss, sitemap, robots
   lib/                  site config + post helpers
   styles/global.css     Tailwind entry, design tokens, rich-text styles
 infra/                  Pulumi program (D1, R2, KV, Worker deploy, custom domains)
+scripts/                EmDash maintenance: schema sync, content import
+content/notion/         Entries exported from Notion (JSON), input for the importer
 ```
 
 ## Local development
@@ -55,7 +57,19 @@ D1, R2 and KV are simulated locally by Wrangler (state lives in `.wrangler/state
 | Tags         | `tag` taxonomy → `/tags/{slug}`                  |
 | Page body    | `content` (Portable Text)                        |
 
-The seed only runs on first setup. To change the schema of a live site, use the admin's **Content Types** screen or see [schema evolution](https://docs.emdashcms.com/deployment/schema-evolution/).
+`projects` (portfolio, `/portfolio/{slug}`): `title`, `summary`, `role`, `period`, `url`, `repository`, `cover`, `featured`, `content` (case study), plus a `stack` taxonomy.
+
+The seed only runs when a database is first set up. After changing `seed/seed.json`, add the missing collections/fields/taxonomies to a live site with:
+
+```bash
+EMDASH_URL=https://gabrielreis.dev EMDASH_TOKEN=<token> pnpm emdash:sync-schema --dry-run   # then without --dry-run
+```
+
+It's additive only (never renames or deletes). Create the token in the admin under **Settings → API Tokens**.
+
+## Importing content
+
+`pnpm emdash:import` reads `content/notion/*.json` and creates or updates entries by slug, keeping the original publish dates, creating missing tags, and re-hosting remote images in the EmDash media library (Notion file URLs expire). Use `--dry-run` first; same `EMDASH_URL` / `EMDASH_TOKEN` variables as above. Against `pnpm dev` no token is needed.
 
 ## Deploying (Pulumi → Cloudflare)
 
@@ -95,6 +109,8 @@ pulumi up
 Back up `emdashEncryptionKey` — it encrypts secrets stored in D1.
 
 > **Finish setup right away.** On an empty database the first visitor to `/_emdash/admin` becomes the admin. Open the `adminUrl` stack output immediately after the first deploy, or put `/_emdash/*` behind [Cloudflare Access](https://docs.emdashcms.com/guides/authentication/).
+
+`pulumi destroy` deliberately leaves the Worker in place (no delete hook, so a resource replacement can never take the site down) — remove it with `pnpm exec wrangler delete` if you really mean to.
 
 Optional config: `workerName` (default `gabrielreis-dev`), `d1LocationHint` (default `enam`), `protectData` (default `true`; protects D1/R2 from `pulumi destroy`).
 

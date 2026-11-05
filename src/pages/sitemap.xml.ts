@@ -5,8 +5,9 @@ import { site } from "@/lib/site";
 // Content lives in D1 and changes without a rebuild, so the sitemap is rendered
 // per request (was next-sitemap at build time).
 export const GET: APIRoute = async () => {
-  const [{ entries: posts }, tags] = await Promise.all([
+  const [{ entries: posts }, { entries: projects }, tags] = await Promise.all([
     getEmDashCollection("posts", { orderBy: { published_at: "desc" }, limit: 1000 }),
+    getEmDashCollection("projects", { orderBy: { published_at: "desc" }, limit: 1000 }),
     getTaxonomyTerms("tag"),
   ]);
 
@@ -14,7 +15,9 @@ export const GET: APIRoute = async () => {
     { loc: "/" },
     { loc: "/blog" },
     { loc: "/about" },
+    { loc: "/portfolio" },
     ...posts.map((p) => ({ loc: `/posts/${p.id}`, lastmod: p.data.updatedAt.toISOString() })),
+    ...projects.map((p) => ({ loc: `/portfolio/${p.id}`, lastmod: p.data.updatedAt.toISOString() })),
     ...tags.map((t) => ({ loc: `/tags/${t.slug}` })),
   ];
 

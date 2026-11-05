@@ -1,0 +1,27 @@
+---
+import { getEmDashCollection, getTaxonomyTermsWithCacheHint } from "emdash";
+import Base from "@/layouts/Base.astro";
+import { ProjectList } from "@/components/ProjectList";
+import { sortProjects, toProjectSummary } from "@/lib/posts";
+
+const [projectsResult, stackResult] = await Promise.all([
+  getEmDashCollection("projects", { orderBy: { published_at: "desc" }, limit: 100 }),
+  getTaxonomyTermsWithCacheHint("stack", { includeCounts: false }),
+]);
+if (projectsResult.error) {
+  console.error("Failed to load projects:", projectsResult.error);
+  return new Response("Unable to load projects", { status: 500 });
+}
+if (Astro.cache?.enabled) {
+  Astro.cache.set(projectsResult.cacheHint);
+  Astro.cache.set(stackResult.cacheHint);
+}
+
+const projects = sortProjects(projectsResult.entries).map(toProjectSummary);
+---
+
+<Base title="Portfolio" description="Things I've built, and what I learned building them.">
+  <h1>Portfolio</h1>
+  <p class="mt-4 mb-12 text-2xl">Things I've built, and what I learned building them.</p>
+  <ProjectList projects={projects} />
+</Base>

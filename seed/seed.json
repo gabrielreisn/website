@@ -3,7 +3,7 @@
   "version": "1",
   "meta": {
     "name": "Digital Garden",
-    "description": "Posts with tags — mirrors the old Notion database (Title, Slug, Date, Tags, Published, Description)",
+    "description": "Posts with tags (mirrors the old Notion database) and portfolio projects",
     "author": "Gabriel Reis"
   },
   "settings": {
@@ -17,7 +17,14 @@
       "labelSingular": "Post",
       "description": "Blog posts. Slug, publish date and draft/published state are built in.",
       "urlPattern": "/posts/{slug}",
-      "supports": ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "search",
+        "seo"
+      ],
       "fields": [
         {
           "slug": "title",
@@ -38,6 +45,70 @@
           "searchable": true
         }
       ]
+    },
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "labelSingular": "Project",
+      "description": "Portfolio entries shown at /portfolio.",
+      "urlPattern": "/portfolio/{slug}",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "search",
+        "seo"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "summary",
+          "label": "Summary",
+          "type": "text"
+        },
+        {
+          "slug": "role",
+          "label": "Role",
+          "type": "string"
+        },
+        {
+          "slug": "period",
+          "label": "Period",
+          "type": "string"
+        },
+        {
+          "slug": "url",
+          "label": "Live URL",
+          "type": "url"
+        },
+        {
+          "slug": "repository",
+          "label": "Repository URL",
+          "type": "url"
+        },
+        {
+          "slug": "cover",
+          "label": "Cover image",
+          "type": "image"
+        },
+        {
+          "slug": "featured",
+          "label": "Featured",
+          "type": "boolean"
+        },
+        {
+          "slug": "content",
+          "label": "Case study",
+          "type": "portableText",
+          "searchable": true
+        }
+      ]
     }
   ],
   "taxonomies": [
@@ -46,7 +117,19 @@
       "label": "Tags",
       "labelSingular": "Tag",
       "hierarchical": false,
-      "collections": ["posts"],
+      "collections": [
+        "posts"
+      ],
+      "terms": []
+    },
+    {
+      "name": "stack",
+      "label": "Stack",
+      "labelSingular": "Technology",
+      "hierarchical": false,
+      "collections": [
+        "projects"
+      ],
       "terms": []
     }
   ]

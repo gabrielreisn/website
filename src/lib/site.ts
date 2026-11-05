@@ -7,7 +7,6 @@ export const site = {
   description:
     "Gabriel is a Software Engineer, these are notes and reflections about Software Engineering, hobbies and water cooler conversations",
   defaultSocialImage: "https://images.unsplash.com/photo-1589698272390-0501a07619bb",
-  portfolioUrl: "https://gabrielreisnf.notion.site/Gabriel-Portfolio-5d94072f658e4e9e95c8b88e6d103fa4",
   author: {
     name: "Gabriel Reis",
     email: "gabrielreisnf@gmail.com",
@@ -20,7 +19,7 @@ export const site = {
   headerLinks: [
     { text: "Blog", url: "/blog" },
     { text: "About Me", url: "/about" },
-    { text: "Portfolio", url: "/portfolio", external: true },
+    { text: "Portfolio", url: "/portfolio" },
   ] satisfies NavLink[],
   socialLinks: [
     { text: "GitHub", url: "https://github.com/gabrielreisn", iconPath: "/icons/github.svg", external: true },
