@@ -4,6 +4,7 @@ import Base from "@/layouts/Base.astro";
 import { Intro } from "@/components/Intro";
 import { PostList } from "@/components/PostList";
 import { toSummary } from "@/lib/posts";
+import { homeSchema } from "@/lib/structured-data";
 
 const { entries, error, cacheHint } = await getEmDashCollection("posts", {
   orderBy: { published_at: "desc" },
@@ -18,7 +19,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const posts = entries.map(toSummary);
 ---
 
-<Base title="Home">
+<Base title="Home" schema={homeSchema()}>
   <Intro />
 
   <section class="mt-24">

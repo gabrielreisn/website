@@ -5,6 +5,7 @@ import { Font } from "astro:assets";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
+import { pageSchema, structuredDataGraph, type SchemaNode } from "@/lib/structured-data";
 import "@/styles/global.css";
 
 interface Props {
@@ -18,6 +19,8 @@ interface Props {
   modifiedTime?: string | null;
   /** Set on CMS-backed pages so EmDash can overlay the entry's SEO panel values. */
   content?: { collection: string; id: string; slug?: string | null };
+  /** Page-specific JSON-LD nodes (see lib/structured-data.ts); defaults to a plain WebPage. */
+  schema?: SchemaNode[];
 }
 
 const {
@@ -30,27 +33,33 @@ const {
   publishedTime,
   modifiedTime,
   content,
+  schema,
 } = Astro.props;
 
 const fullTitle = title === site.name ? title : `${title} | ${site.name}`;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site.url).href;
 
-// EmDashHead renders <meta>, Open Graph, Twitter cards, canonical and JSON-LD
-// from this context (replaces the old modules/metadata.ts).
-const page = createPublicPageContext({
-  Astro,
-  kind: content ? "content" : "custom",
-  pageType: type,
-  title: fullTitle,
-  pageTitle: fullTitle,
-  description,
-  canonical: canonicalUrl,
-  image,
-  content,
-  seo: { ogImage: image, robots },
-  articleMeta: { publishedTime, modifiedTime, author: site.author.name },
-  siteName: site.name,
-});
+// EmDashHead renders <meta>, Open Graph, Twitter cards and canonical from this
+// context (replaces the old modules/metadata.ts). JSON-LD comes from
+// `structuredData`, which plugins/structured-data.ts reads off the context.
+const page = {
+  ...createPublicPageContext({
+    Astro,
+    kind: content ? "content" : "custom",
+    pageType: type,
+    title: fullTitle,
+    pageTitle: fullTitle,
+    description,
+    canonical: canonicalUrl,
+    image,
+    content,
+    seo: { ogImage: image, robots },
+    articleMeta: { publishedTime, modifiedTime, author: site.author.name },
+    siteName: site.name,
+    siteUrl: site.url,
+  }),
+  structuredData: structuredDataGraph(schema ?? pageSchema({ url: canonicalUrl, name: title, description })),
+};
 ---
 
 <!doctype html>

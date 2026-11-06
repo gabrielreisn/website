@@ -19,9 +19,12 @@ type PostEntry = { id: string; data: Post };
 
 const WORDS_PER_MINUTE = 200;
 
+export function wordCount(content: PortableTextBlock[] | undefined): number {
+  return extractPlainText(content).match(/\w+/g)?.length ?? 0;
+}
+
 export function readingTime(content: PortableTextBlock[] | undefined): number {
-  const words = extractPlainText(content).match(/\w+/g)?.length ?? 0;
-  return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
+  return Math.max(1, Math.ceil(wordCount(content) / WORDS_PER_MINUTE));
 }
 
 export function excerpt(text: string, max = 200): string {
@@ -124,9 +127,9 @@ export function toProjectSummary(project: ProjectEntry): ProjectSummary {
 
 /** `kind` values (the "Type" select in the admin), in /portfolio section order, with their headings. */
 const KIND_SECTIONS: Record<string, string> = {
-  "Working project": "Working projects",
   "Personal project": "Personal projects",
   Conference: "Conferences",
+  "Working project": "Working projects",
 };
 
 export function groupByKind(projects: ProjectSummary[]): Array<{ heading: string | null; projects: ProjectSummary[] }> {

@@ -4,6 +4,7 @@ import { Image, PortableText } from "emdash/ui";
 import Base from "@/layouts/Base.astro";
 import { site } from "@/lib/site";
 import { imageUrl } from "@/lib/posts";
+import { aboutSchema } from "@/lib/structured-data";
 
 // Content lives in EmDash: Pages → "about".
 const { entry: page, error, cacheHint } = await getEmDashEntry("pages", "about");
@@ -28,6 +29,14 @@ const seo = getSeoMeta(page, {
   canonical={seo.canonical}
   robots={seo.robots}
   content={{ collection: "pages", id: page.data.id, slug: "about" }}
+  schema={aboutSchema({
+    url: seo.canonical ?? "/about",
+    name: seo.title ?? page.data.title,
+    description: seo.description,
+    image: imageUrl(page.data.image),
+    datePublished: page.data.publishedAt?.toISOString() ?? null,
+    dateModified: page.data.updatedAt.toISOString(),
+  })}
 >
   <div>
     <h1 class="mb-8" {...page.edit.title}>{page.data.title}</h1>

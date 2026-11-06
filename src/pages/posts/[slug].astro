@@ -1,12 +1,13 @@
 ---
-import { decodeSlug, getEmDashEntry, getSeoMeta } from "emdash";
+import { decodeSlug, extractPlainText, getEmDashEntry, getSeoMeta } from "emdash";
 import { PortableText } from "emdash/ui";
 import Base from "@/layouts/Base.astro";
 import AnchoredHeading from "@/components/AnchoredHeading.astro";
 import { ReadableDateTime } from "@/components/ReadableDateTime";
 import { TagList } from "@/components/TagList";
 import { site } from "@/lib/site";
-import { formatDate, readingTime, tagsOf } from "@/lib/posts";
+import { excerpt, formatDate, readingTime, tagsOf, wordCount } from "@/lib/posts";
+import { postSchema } from "@/lib/structured-data";
 
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite("/404");
@@ -28,6 +29,9 @@ const seo = getSeoMeta(post, {
 
 const tags = tagsOf(post);
 const publishedAt = post.data.publishedAt;
+const publishedTime = publishedAt?.toISOString() ?? null;
+const modifiedTime = post.data.updatedAt.toISOString();
+const minutes = readingTime(post.data.content);
 ---
 
 <Base
@@ -37,9 +41,20 @@ const publishedAt = post.data.publishedAt;
   canonical={seo.canonical}
   robots={seo.robots}
   type="article"
-  publishedTime={publishedAt?.toISOString() ?? null}
-  modifiedTime={post.data.updatedAt.toISOString()}
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
   content={{ collection: "posts", id: post.data.id, slug }}
+  schema={postSchema({
+    url: seo.canonical ?? `/posts/${post.id}`,
+    headline: seo.title ?? post.data.title,
+    description: seo.description ?? post.data.description ?? excerpt(extractPlainText(post.data.content)),
+    image: seo.ogImage,
+    datePublished: publishedTime,
+    dateModified: modifiedTime,
+    tags: tags.map((tag) => tag.label),
+    wordCount: wordCount(post.data.content),
+    readingMinutes: minutes,
+  })}
 >
   <article class="flex flex-col justify-center">
     {isPreview && <p class="mb-8 border-l-3 border-accent pl-4 text-sm text-muted italic">Unpublished preview</p>}
@@ -49,8 +64,8 @@ const publishedAt = post.data.publishedAt;
       <div class="space-x-2 text-[0.9rem] opacity-60">
         <ReadableDateTime
           date={formatDate(publishedAt)}
-          isoDate={publishedAt?.toISOString() ?? null}
-          readingTime={readingTime(post.data.content)}
+          isoDate={publishedTime}
+          readingTime={minutes}
         />
       </div>
     </header>

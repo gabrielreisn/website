@@ -52,23 +52,7 @@ export function ProjectList({ projects }: { projects: ProjectSummary[] }) {
     <ul className="list-none">
       {projects.map((project) => (
         <li key={project.slug} className="flex flex-col border-t border-rule py-12">
-          {project.cover && (
-            <a href={`/portfolio/${project.slug}`} className="mb-4 block" tabIndex={-1} aria-hidden="true">
-              <img
-                src={project.cover.src}
-                alt=""
-                width={project.cover.width}
-                height={project.cover.height}
-                loading="lazy"
-                decoding="async"
-                className="aspect-video w-full border border-rule object-cover"
-                style={project.cover.color ? { backgroundColor: project.cover.color } : undefined}
-              />
-            </a>
-          )}
-          <div className="mt-4">
-            <ProjectMeta role={project.role} period={project.period} />
-          </div>
+          <ProjectMeta role={project.role} period={project.period} />
           <div className="mt-2">
             <StackList stack={project.stack} />
           </div>
@@ -79,6 +63,21 @@ export function ProjectList({ projects }: { projects: ProjectSummary[] }) {
               {project.title}
             </a>
           </h3>
+
+          {project.cover && (
+            <a href={`/portfolio/${project.slug}`} className="mt-4 block" tabIndex={-1} aria-hidden="true">
+              <img
+                src={project.cover.src}
+                alt=""
+                width={project.cover.width}
+                height={project.cover.height}
+                loading="lazy"
+                decoding="async"
+                className="aspect-video w-full rounded-lg border border-rule object-cover"
+                style={project.cover.color ? { backgroundColor: project.cover.color } : undefined}
+              />
+            </a>
+          )}
 
           {project.summary && <p className="mt-4 text-black/80">{project.summary}</p>}
 

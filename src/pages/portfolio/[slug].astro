@@ -6,6 +6,7 @@ import AnchoredHeading from "@/components/AnchoredHeading.astro";
 import { ProjectLinks, ProjectMeta, StackList } from "@/components/ProjectList";
 import { site } from "@/lib/site";
 import { imageUrl, toProjectSummary } from "@/lib/posts";
+import { projectSchema } from "@/lib/structured-data";
 
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite("/404");
@@ -25,18 +26,29 @@ const seo = getSeoMeta(entry, {
   path: `/portfolio/${entry.id}`,
   defaultOgImage: new URL(imageUrl(entry.data.cover) ?? site.defaultSocialImage, site.url).href,
 });
+const description = seo.description ?? project.summary;
+const publishedTime = entry.data.publishedAt?.toISOString() ?? null;
+const modifiedTime = entry.data.updatedAt.toISOString();
 ---
 
 <Base
   title={seo.title}
-  description={seo.description ?? project.summary}
+  description={description}
   image={seo.ogImage}
   canonical={seo.canonical}
   robots={seo.robots}
   type="article"
-  publishedTime={entry.data.publishedAt?.toISOString() ?? null}
-  modifiedTime={entry.data.updatedAt.toISOString()}
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
   content={{ collection: "projects", id: entry.data.id, slug }}
+  schema={projectSchema({
+    url: seo.canonical ?? `/portfolio/${entry.id}`,
+    name: seo.title ?? project.title,
+    description,
+    datePublished: publishedTime,
+    dateModified: modifiedTime,
+    project,
+  })}
 >
   <article class="flex flex-col justify-center">
     {isPreview && <p class="mb-8 border-l-3 border-accent pl-4 text-sm text-muted italic">Unpublished preview</p>}
@@ -50,7 +62,7 @@ const seo = getSeoMeta(entry, {
       <ProjectLinks url={project.url} repository={project.repository} />
     </header>
 
-    {entry.data.cover && <div class="mt-12"><Image image={entry.data.cover} priority /></div>}
+    {entry.data.cover && <div class="mt-12 overflow-hidden rounded-lg"><Image image={entry.data.cover} priority /></div>}
 
     <div class="content mt-16">
       <PortableText value={entry.data.content} components={{ block: { h2: AnchoredHeading, h3: AnchoredHeading } }} />

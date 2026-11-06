@@ -3,6 +3,7 @@ import { getEmDashCollection } from "emdash";
 import Base from "@/layouts/Base.astro";
 import { ProjectList } from "@/components/ProjectList";
 import { groupByKind, sortProjects, toProjectSummary } from "@/lib/posts";
+import { portfolioSchema } from "@/lib/structured-data";
 
 const projectsResult = await getEmDashCollection("projects", { orderBy: { published_at: "desc" }, limit: 100 });
 if (projectsResult.error) {
@@ -12,11 +13,13 @@ if (projectsResult.error) {
 if (Astro.cache?.enabled) Astro.cache.set(projectsResult.cacheHint);
 
 const groups = groupByKind(sortProjects(projectsResult.entries).map(toProjectSummary));
+const description = "Things I've built, and what I learned building them.";
+const schema = portfolioSchema({ description, projects: groups.flatMap((group) => group.projects) });
 ---
 
-<Base title="Portfolio" description="Things I've built, and what I learned building them.">
+<Base title="Portfolio" description={description} schema={schema}>
   <h1>Portfolio</h1>
-  <p class="mt-4 mb-12 text-2xl">Things I've built, and what I learned building them.</p>
+  <p class="mt-4 mb-12 text-2xl">{description}</p>
   {groups.length === 0 && <ProjectList projects={[]} />}
   {
     groups.map((group, i) => (

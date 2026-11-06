@@ -23,7 +23,8 @@ src/
   layouts/Base.astro    HTML shell, SEO via <EmDashHead>
   components/*.tsx      React UI (Header, Footer, PostList, TagList, …)
   pages/                /, /blog, /about, /posts/[slug], /tags/[tag], /portfolio, rss, sitemap, robots
-  lib/                  site config + post helpers
+  lib/                  site config, post helpers, JSON-LD builders (structured-data.ts)
+  plugins/              Local EmDash plugin that swaps EmDash's default JSON-LD for ours
   styles/global.css     Tailwind entry, design tokens, rich-text styles
 infra/                  Pulumi program (D1, R2, KV, Worker deploy, custom domains)
 scripts/                EmDash maintenance: schema sync

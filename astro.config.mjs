@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
 import { d1, r2 } from "@emdash-cms/cloudflare";
@@ -18,6 +19,13 @@ export default defineConfig({
     emdash({
       database: d1({ binding: "DB", session: "auto", coalesce: true }),
       storage: r2({ binding: "MEDIA" }),
+      plugins: [
+        {
+          id: "structured-data",
+          version: "1.0.0",
+          entrypoint: fileURLToPath(new URL("./src/plugins/structured-data.ts", import.meta.url)),
+        },
+      ],
     }),
   ],
   fonts: [

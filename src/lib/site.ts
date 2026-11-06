@@ -11,6 +11,7 @@ export const site = {
     name: "Gabriel Reis",
     email: "gabrielreisnf@gmail.com",
     picture: "/me.jpeg",
+    jobTitle: "Software Engineer",
   },
   headerLinks: [
     { text: "Blog", url: "/blog" },

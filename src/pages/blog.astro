@@ -4,6 +4,7 @@ import Base from "@/layouts/Base.astro";
 import { PostList } from "@/components/PostList";
 import { TagList } from "@/components/TagList";
 import { toSummary } from "@/lib/posts";
+import { blogSchema } from "@/lib/structured-data";
 
 const PAGE_SIZE = 20;
 const cursor = Astro.url.searchParams.get("cursor") || undefined;
@@ -26,7 +27,7 @@ const tags = tagsResult.data.map((t) => ({ slug: t.slug, label: t.label }));
 const next = postsResult.nextCursor ? `/blog?cursor=${encodeURIComponent(postsResult.nextCursor)}` : null;
 ---
 
-<Base title="Blog">
+<Base title="Blog" schema={blogSchema({ name: "All Posts", posts })}>
   <h1>All Posts</h1>
   {
     tags.length > 0 && (

@@ -3,6 +3,7 @@ import { decodeSlug, getEmDashCollection, getTerm } from "emdash";
 import Base from "@/layouts/Base.astro";
 import { PostList } from "@/components/PostList";
 import { toSummary } from "@/lib/posts";
+import { tagSchema } from "@/lib/structured-data";
 
 const slug = decodeSlug(Astro.params.tag);
 const tag = slug ? await getTerm("tag", slug) : null;
@@ -18,9 +19,12 @@ if (error) {
   return new Response("Unable to load posts", { status: 500 });
 }
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const posts = entries.map(toSummary);
+const description = `Posts tagged #${tag.label}`;
 ---
 
-<Base title={tag.label} description={`Posts tagged #${tag.label}`}>
+<Base title={tag.label} description={description} schema={tagSchema({ slug: tag.slug, label: tag.label, description, posts })}>
   <h1>{tag.label}</h1>
-  <PostList posts={entries.map(toSummary)} />
+  <PostList posts={posts} />
 </Base>
